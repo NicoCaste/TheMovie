@@ -48,16 +48,6 @@ class MovieDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        notificationCenter.addObserver(self, selector: #selector(showErrorView(_:)), name: NSNotification.Name.showErrorView, object: nil)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        viewWillDisappear(animated)
-        notificationCenter.removeObserver(self, name: NSNotification.Name.showErrorView, object: nil)
-    }
-    
     enum SubscribedTitle: String {
         case subscribed = "subscribed"
         case unSubscribe = "subscribe"
@@ -120,13 +110,6 @@ class MovieDetailViewController: UIViewController {
                 completion(image)
             }
         })
-    }
-    
-    //MARK: - ShowErrorView
-    @objc func showErrorView(_ error: Notification) {
-        guard let errorMessage = error.userInfo?["errorMessage"] as? ErrorMessage,
-              let navigation = self.navigationController else { return }
-        Router.showErrorView(navigation: navigation, message: errorMessage)
     }
 }
 

@@ -34,11 +34,6 @@ class HomeViewController: UIViewController {
         notificationCenter.addObserver(self, selector: #selector(showErrorView(_:)), name: NSNotification.Name.showErrorView, object: nil)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        viewWillDisappear(animated)
-        notificationCenter.removeObserver(self, name: NSNotification.Name.showErrorView, object: nil)
-    }
-    
     // MARK: - Set SearchView
     func setSearchView() {
         searchView.translatesAutoresizingMaskIntoConstraints = false
@@ -83,10 +78,8 @@ class HomeViewController: UIViewController {
     
     // MARK: - SetActivityIndicator
     func setActivityIndicator() {
-        let x = (view.frame.minX + self.view.frame.maxX) / 2
-        let y = (view.frame.minY + self.view.frame.maxY) / 2
         activityIndicator = UIActivityIndicatorView(style: .large)
-        activityIndicator?.color = .systemPink
+        activityIndicator?.color = .white
         guard let activityIndicator = activityIndicator else { return }
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(activityIndicator)
@@ -98,7 +91,7 @@ class HomeViewController: UIViewController {
     // MARK: - StopActivity
     func stopActivityIndicator() {
         DispatchQueue.main.async {
-            self.coverImageView.isHidden = true
+            self.coverImageView.removeFromSuperview()
             self.header.isHidden = false
             self.filmList.isHidden = false
             self.activityIndicator?.stopAnimating()

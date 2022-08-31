@@ -102,10 +102,9 @@ class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
             allMovies.append(MovieWithImage(movie: newMovie))
         }
         
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let self = self else { return }
-            for movie in self.allMovies {
-                guard let movie = movie else { return }
+        for movie in self.allMovies {
+            guard let movie = movie else { return }
+            if movie.image == nil {
                 self.setMovieImage(movie: movie, section: .TODAS)
             }
         }
@@ -161,12 +160,8 @@ class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
         movieSubscribed.subscribed = true
         changeSubscriptionStatusFor(movie: movie, to: true)
         moviesSubscribed.append(MovieWithImage(movie: movieSubscribed))
-        
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let self = self else { return }
-            for movie in self.moviesSubscribed {
-                self.setMovieImage(movie: movie, section: .SUSCRIPTAS)
-            }
+        for movie in self.moviesSubscribed {
+            self.setMovieImage(movie: movie, section: .SUSCRIPTAS)
         }
         
         DispatchQueue.main.async {
@@ -214,17 +209,15 @@ class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
         if movie.image == nil {
             let imageName = movie.movie?.backdropPath
             let url = ApiCallerHelper.getUrlForImage(imageName: imageName ?? "")
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.delegate?.getImageBy(url: url) { dataImage in
-                    guard let image = UIImage(data: dataImage),
-                          let id = movie.movie?.id
-                    else { return }
-                    self.saveMovieImage(image: image, id: id , section: section)
-                }
+            self.delegate?.getImageBy(url: url) { dataImage in
+                guard let image = UIImage(data: dataImage),
+                      let id = movie.movie?.id
+                else { return }
+                self.saveMovieImage(image: image, id: id , section: section)
             }
         }
     }
-    
+    var imageLoad = 0
     func saveMovieImage(image: UIImage, id: Int, section: FilmsSections) {
         switch section {
         case .SUSCRIPTAS:
@@ -241,7 +234,7 @@ class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
             }) else { return }
             if index < allMovies.count {
                 allMovies[index]?.image = image.grayscale()
-                if index == allMovies.count / 2 {
+                if allMovies[index]?.movie?.id == allMovies.first??.movie?.id {
                     DispatchQueue.main.async {
                         self.delegate?.readyToShow()
                         self.tableView.reloadData()
