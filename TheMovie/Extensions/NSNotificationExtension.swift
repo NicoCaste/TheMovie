@@ -23,4 +23,8 @@ extension NSNotification.Name {
     static var foundMovies: NSNotification.Name {
         return .init(rawValue: "foundMovies")
     }
+    
+    static var showErrorView: NSNotification.Name {
+        return .init(rawValue: "showErrorView")
+    }
 }

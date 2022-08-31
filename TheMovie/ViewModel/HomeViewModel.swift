@@ -44,8 +44,8 @@ class HomeViewModel: BaseViewModel {
             switch result {
             case .success(let movieList):
                 completion(movieList)
-            case .failure(let error):
-                print(error)
+            case .failure(_):
+                ShowErrorManager.showErrorView(title: "Ups".localized(), description: "genericError".localized())
             }
         })
     }
@@ -69,6 +69,10 @@ class HomeViewModel: BaseViewModel {
             removeSubscribe(movie: movieSubscribe)
         }
     }
+}
+
+// MARK: - User Defaults
+extension HomeViewModel {
     
     func addSubscribe(movie: Movie) {
         var selectedMovies: [Movie?] = []
@@ -115,6 +119,5 @@ class HomeViewModel: BaseViewModel {
         }
         
         return moviesSubscribed
-        
     }
 }

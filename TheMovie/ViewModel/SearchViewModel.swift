@@ -33,8 +33,8 @@ class SearchViewModel: BaseViewModel {
             case .success(let movieList):
                 let userInfo: [String : Any] = [FoundMovies.foundMovie.rawValue : movieList]
                 NotificationCenter.default.post(name: NSNotification.Name.foundMovies, object: nil, userInfo: userInfo)
-            case .failure(let error):
-                print(error)
+            case .failure(_):
+                ShowErrorManager.showErrorView(title: "Ups".localized(), description: "genericError".localized())
             }
         })
     }
@@ -43,6 +43,4 @@ class SearchViewModel: BaseViewModel {
         let searchText = text.replacingOccurrences(of: " ", with: "+")
         return Parameters(query: searchText)
     }
-    
-    
 }

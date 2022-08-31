@@ -1,0 +1,12 @@
+/* 
+  Localizable.strings
+  TheMovie
+
+  Created by nicolas castello on 30/08/2022.
+  
+*/
+
+"subscribed" = "SUBSCRIBED";
+"subscribe" = "SUBSCRIBE";
+"Ups" = "Ups!";
+"genericError" = "We had a problem. \nPlease try later!";

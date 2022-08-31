@@ -53,14 +53,7 @@ class MovieListTableViewCell: UITableViewCell {
         movieImageView.clipsToBounds = true
         movieImageView.layer.masksToBounds = true
         movieImageView.layer.cornerRadius = 7
-        
-        NSLayoutConstraint.activate([
-            movieImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            movieImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            movieImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            movieImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            movieImageView.heightAnchor.constraint(equalToConstant: 200)
-        ])
+        layoutMovieImageView()
     }
     
     func setMovieImage(image: UIImage?) {
@@ -77,12 +70,7 @@ class MovieListTableViewCell: UITableViewCell {
         greyView.backgroundColor = UIColor.init(displayP3Red: 0, green: 0, blue: 0, alpha: 0.3)
         greyView.layer.masksToBounds = true
         greyView.layer.cornerRadius = 7
-        NSLayoutConstraint.activate([
-            greyView.leadingAnchor.constraint(equalTo: movieImageView.leadingAnchor),
-            greyView.trailingAnchor.constraint(equalTo: movieImageView.trailingAnchor),
-            greyView.topAnchor.constraint(equalTo: movieImageView.topAnchor),
-            greyView.bottomAnchor.constraint(equalTo: movieImageView.bottomAnchor)
-        ])
+        layoutGreyView()
     }
     
     func setTitleConfig() {
@@ -93,13 +81,7 @@ class MovieListTableViewCell: UITableViewCell {
         movieTitleLabel.font = UIFont(name: "Noto Sans Myanmar Bold", size: 24)
         movieTitleLabel.textColor = .white
         movieTitleLabel.textAlignment = .left
-        
-        NSLayoutConstraint.activate([
-            movieTitleLabel.leadingAnchor.constraint(equalTo: movieImageView.leadingAnchor, constant: 15),
-            movieTitleLabel.bottomAnchor.constraint(equalTo: movieImageView.bottomAnchor, constant: -15),
-            movieTitleLabel.trailingAnchor.constraint(equalTo: movieImageView.trailingAnchor, constant: -15)
-            
-        ])
+        layoutMovieTitleLabel()
     }
     
     func setCategoryImageView() {
@@ -108,11 +90,7 @@ class MovieListTableViewCell: UITableViewCell {
         movieCategorieView.layer.masksToBounds = true
         movieCategorieView.layer.cornerRadius = 4
         movieCategorieView.backgroundColor = .init(displayP3Red: 0, green: 0, blue: 0, alpha: 0.5)
-        
-        NSLayoutConstraint.activate([
-            movieCategorieView.trailingAnchor.constraint(equalTo: movieImageView.trailingAnchor, constant: -10),
-            movieCategorieView.topAnchor.constraint(equalTo: movieImageView.topAnchor, constant: 10),
-        ])
+        layoutMovieCategorieView()
     }
     
     func setCateogryName() {
@@ -123,7 +101,52 @@ class MovieListTableViewCell: UITableViewCell {
         movieCategorieLabel.font = UIFont(name: "Noto Sans Myanmar Bold", size: 14)
         movieCategorieLabel.textColor = .white
         movieCategorieLabel.textAlignment = .center
-        
+        layoutMovieCategorieLabel()
+
+    }
+}
+
+// MARK: Layout
+extension MovieListTableViewCell {
+    
+    //MARK: - Layout MovieImageView
+    func layoutMovieImageView() {
+        NSLayoutConstraint.activate([
+            movieImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            movieImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            movieImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            movieImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            movieImageView.heightAnchor.constraint(equalToConstant: 200)
+        ])
+    }
+    //MARK: - Layout GreyView
+    func layoutGreyView() {
+        NSLayoutConstraint.activate([
+            greyView.leadingAnchor.constraint(equalTo: movieImageView.leadingAnchor),
+            greyView.trailingAnchor.constraint(equalTo: movieImageView.trailingAnchor),
+            greyView.topAnchor.constraint(equalTo: movieImageView.topAnchor),
+            greyView.bottomAnchor.constraint(equalTo: movieImageView.bottomAnchor)
+        ])
+    }
+    //MARK: - Layout MovieTitleLabel
+    func layoutMovieTitleLabel() {
+        NSLayoutConstraint.activate([
+            movieTitleLabel.leadingAnchor.constraint(equalTo: movieImageView.leadingAnchor, constant: 15),
+            movieTitleLabel.bottomAnchor.constraint(equalTo: movieImageView.bottomAnchor, constant: -15),
+            movieTitleLabel.trailingAnchor.constraint(equalTo: movieImageView.trailingAnchor, constant: -15)
+        ])
+    }
+    
+    //MARK: - Layout MovieCategorieView
+    func layoutMovieCategorieView() {
+        NSLayoutConstraint.activate([
+            movieCategorieView.trailingAnchor.constraint(equalTo: movieImageView.trailingAnchor, constant: -10),
+            movieCategorieView.topAnchor.constraint(equalTo: movieImageView.topAnchor, constant: 10),
+        ])
+    }
+    
+    //MARK: - Layout MovieCategorieLabel
+    func layoutMovieCategorieLabel() {
         NSLayoutConstraint.activate([
             movieCategorieLabel.topAnchor.constraint(equalTo: movieCategorieView.topAnchor, constant: 5),
             movieCategorieLabel.bottomAnchor.constraint(equalTo: movieCategorieView.bottomAnchor),

@@ -22,6 +22,7 @@ class MovieDetailViewController: UIViewController {
     
     var movie: MovieWithImage
     var viewModel: MovieDetailViewModel?
+    var notificationCenter = NotificationCenter.default
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,9 +48,19 @@ class MovieDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        notificationCenter.addObserver(self, selector: #selector(showErrorView(_:)), name: NSNotification.Name.showErrorView, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        viewWillDisappear(animated)
+        notificationCenter.removeObserver(self, name: NSNotification.Name.showErrorView, object: nil)
+    }
+    
     enum SubscribedTitle: String {
-        case subscribed = "SUBSCRIPTO"
-        case unSubscribe = "SUSCRIBIRME"
+        case subscribed = "subscribed"
+        case unSubscribe = "subscribe"
     }
     
     // MARK: - MovieImage
@@ -72,7 +83,7 @@ class MovieDetailViewController: UIViewController {
     @objc func subscribeFilms() {
         let subscribed = movie.movie?.subscribed ?? false
         movie.movie?.subscribed = !subscribed
-        subscribeButton.setTitle(SubscribedTitle.unSubscribe.rawValue, for: .normal)
+        subscribeButton.setTitle(SubscribedTitle.unSubscribe.rawValue.localized(), for: .normal)
         setSubscribeButton()
         
         guard let movieSubscribe = movie.movie else { return }
@@ -87,12 +98,12 @@ class MovieDetailViewController: UIViewController {
         guard let subscribed = movie.movie?.subscribed else {
             subscribeButton.setTitleColor(.white, for: .normal)
             subscribeButton.backgroundColor = .clear
-            subscribeButton.setTitle(SubscribedTitle.unSubscribe.rawValue, for: .normal)
+            subscribeButton.setTitle(SubscribedTitle.unSubscribe.rawValue.localized(), for: .normal)
             return
         }
         
         let color = (subscribed) ? filterColorView.backgroundColor : .white
-        let title = (subscribed) ? SubscribedTitle.subscribed.rawValue: SubscribedTitle.unSubscribe.rawValue
+        let title = (subscribed) ? SubscribedTitle.subscribed.rawValue.localized(): SubscribedTitle.unSubscribe.rawValue.localized()
         
         subscribeButton.setTitleColor(color, for: .normal)
         subscribeButton.backgroundColor = (subscribed) ? .white : .clear
@@ -110,18 +121,25 @@ class MovieDetailViewController: UIViewController {
             }
         })
     }
+    
+    //MARK: - ShowErrorView
+    @objc func showErrorView(_ error: Notification) {
+        guard let errorMessage = error.userInfo?["errorMessage"] as? ErrorMessage,
+              let navigation = self.navigationController else { return }
+        Router.showErrorView(navigation: navigation, message: errorMessage)
+    }
 }
 
 //MARK: ConfigViews
 extension MovieDetailViewController {
-    //MARK: - ScrollView
+    //MARK: - Set ScrollView
     func setScrollView() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
         layoutScrollView()
     }
     
-    //MARK: - ContentView
+    //MARK: - Set ContentView
     func setContentView() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(contentView)
@@ -129,7 +147,7 @@ extension MovieDetailViewController {
         layoutContentView()
     }
     
-    //MARK: - ImageView
+    //MARK: - Set ImageView
     func setImageView() {
         setMovieImage()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -141,7 +159,7 @@ extension MovieDetailViewController {
         layoutImageView()
     }
     
-    //MARK: - BackgroundImage
+    //MARK: - Set BackgroundImage
     func setBackgroundImage() {
         contentViewBackground.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(contentViewBackground)
@@ -161,7 +179,7 @@ extension MovieDetailViewController {
         layoutBackgroundImage()
     }
     
-    //MARK: - ColorFilterView
+    //MARK: - Set ColorFilterView
     func setColorFilterView(color: UIColor) {
         filterColorView .translatesAutoresizingMaskIntoConstraints = false
         contentViewBackground.addSubview(filterColorView)
@@ -170,7 +188,7 @@ extension MovieDetailViewController {
         layoutFilterColorView()
     }
     
-    //MARK: - CustomBackButton
+    //MARK: - Set CustomBackButton
     func setCustomBackButton() {
         backImageTarget.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(backImageTarget)
@@ -183,7 +201,7 @@ extension MovieDetailViewController {
         layoutCustomBackButton()
     }
     
-    //MARK: - MovieTitleLabel
+    //MARK: - Set MovieTitleLabel
     func setMovieTitleLabel() {
         movieTitleLabel.text = movie.movie?.title ?? ""
         movieTitleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -246,7 +264,7 @@ extension MovieDetailViewController {
 
 //MARK: Layout
 extension MovieDetailViewController {
-    // MARK: - ScrollView
+    // MARK: - Layout ScrollView
     func layoutScrollView() {
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -256,7 +274,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: - ContentView
+    // MARK: - Layout ContentView
     func layoutContentView() {
         NSLayoutConstraint.activate([
             contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
@@ -266,7 +284,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: ImageView
+    // MARK: Layout ImageView
     func layoutImageView() {
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 43),
@@ -276,7 +294,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    //MARK: - BackgroundImage
+    //MARK: - Layout BackgroundImage
     func layoutBackgroundImage() {
         NSLayoutConstraint.activate([
             contentViewBackground.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -286,7 +304,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: - FilterColorView
+    // MARK: - Layout FilterColorView
     func layoutFilterColorView() {
         NSLayoutConstraint.activate([
             filterColorView.leadingAnchor.constraint(equalTo: contentViewBackground.leadingAnchor),
@@ -296,7 +314,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: - MovieTitleLabel
+    // MARK: - Layout MovieTitleLabel
     func layoutMovieTitleLabel() {
         NSLayoutConstraint.activate([
             movieTitleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 23),
@@ -305,7 +323,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: - ReleaseDateLabel
+    // MARK: - Layout ReleaseDateLabel
     func layoutReleaseDateLabel() {
         NSLayoutConstraint.activate([
             releaseDateLabel.topAnchor.constraint(equalTo: movieTitleLabel.bottomAnchor, constant: 2),
@@ -313,7 +331,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: - SubscribeButton
+    // MARK: - Layout SubscribeButton
     func layoutSubscribeButton() {
         NSLayoutConstraint.activate([
             subscribeButton.topAnchor.constraint(equalTo: releaseDateLabel.bottomAnchor, constant: 20),
@@ -323,7 +341,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: - DetailTitleLabel
+    // MARK: - Layout DetailTitleLabel
     func layoutDetailTitleLabel() {
         NSLayoutConstraint.activate([
             detailTitleLabel.topAnchor.constraint(equalTo: subscribeButton.bottomAnchor, constant: 45),
@@ -332,7 +350,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: - LayoutDetailDescriptionLabel
+    // MARK: - Layout DetailDescriptionLabel
     func layoutDetailDescriptionLabel() {
         NSLayoutConstraint.activate([
             detailDescriptionLabel.topAnchor.constraint(equalTo: detailTitleLabel.bottomAnchor, constant: 10),
@@ -342,7 +360,7 @@ extension MovieDetailViewController {
         ])
     }
     
-    // MARK: - CustomBackButton
+    // MARK: - Layout CustomBackButton
     func layoutCustomBackButton() {
         NSLayoutConstraint.activate([
             backImageTarget.heightAnchor.constraint(equalToConstant: 28),

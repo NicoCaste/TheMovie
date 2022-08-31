@@ -15,6 +15,7 @@ protocol FilmlistViewProtocol: NSObjectProtocol {
     func getGendreBy(id: Int?) -> String
     func getImageBy(url: String, completion:@escaping(Data) -> Void)
     func goToMovieDetail(movie: MovieWithImage)
+    func readyToShow()
 }
 
 enum FilmsSections: String {
@@ -23,7 +24,6 @@ enum FilmsSections: String {
 }
 
 class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
-    lazy var activityIndicator: UIActivityIndicatorView? = UIActivityIndicatorView(style: .large)
     lazy var tableView: UITableView = UITableView()
     let notificationCenter = NotificationCenter.default
     var filmListSections: [String] = [FilmsSections.TODAS.rawValue]
@@ -35,7 +35,7 @@ class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
     var firstLoad: Bool = true
     var nextPage: Int = 1
     var indexPaths: [IndexPath] = []
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .black
@@ -63,10 +63,11 @@ class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
             guard let self = self,
                   let results = movieList.results
             else { return }
+            
             self.nextPage += 1
             self.setMovieList(results: results)
             
-            DispatchQueue.global(qos: .background).async { [weak self] in
+            DispatchQueue.global(qos: .userInteractive).async { [weak self] in
                 guard let self = self else { return }
                 if self.nextPage <= 2 {
                     self.getFilmList(page: self.nextPage)
@@ -240,10 +241,12 @@ class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
             }) else { return }
             if index < allMovies.count {
                 allMovies[index]?.image = image.grayscale()
-                if index == allMovies.count - 1 {
-                    self.stopActivityIndicator()
-                }
-            }
+                if index == allMovies.count / 2 {
+                    DispatchQueue.main.async {
+                        self.delegate?.readyToShow()
+                        self.tableView.reloadData()
+                    }
+                }                }
         }
     }
 }
@@ -279,12 +282,12 @@ extension FilmListView {
         if filmListSections[section] == FilmsSections.SUSCRIPTAS.rawValue {
             return 1
         } else if filmListSections[section] == FilmsSections.TODAS.rawValue {
-           return allMovies.count
+            return allMovies.count
         }
         
         return 0
     }
-
+    
     // MARK: - Cell For Row
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let emptyCell = UITableViewCell()
@@ -340,28 +343,6 @@ extension FilmListView: MovieCardProtocol {
 
 // MARK: - Config Views
 extension FilmListView {
-    
-    // MARK: - SetActivityIndicator
-    func setActivityIndicator() {
-        activityIndicator?.color = .systemGray
-        guard let activityIndicator = activityIndicator else { return }
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        activityIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        activityIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-    }
-    
-    // MARK: - StopActivity
-    func stopActivityIndicator() {
-        DispatchQueue.main.async {
-            self.tableView.isHidden = false
-            self.tableView.reloadData()
-            self.activityIndicator?.stopAnimating()
-            self.activityIndicator?.removeFromSuperview()
-        }
-    }
-    
     // MARK: - TableView
     func setTableView() {
         tableView.delegate = self

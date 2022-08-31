@@ -22,7 +22,7 @@ class BaseViewModel {
             case .success(let imageData):
                 completion(imageData)
             case .failure(let error):
-                print(error)
+                ShowErrorManager.showErrorView(title: "Ups".localized(), description: "genericError".localized())
             }
         })
     }

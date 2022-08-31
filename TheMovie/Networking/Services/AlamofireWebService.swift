@@ -20,11 +20,6 @@ final class AlamofireWebService: WebService {
             if let data = response.value {
                 if response.response?.statusCode == 200 {
                     completion(.success(data))
-                } else if response.response?.statusCode == 429 {
-                    completion(.failure(TheMovieError.unexpected(code: 429)))
-                }
-                else {
-                    completion(.failure(TheMovieError.notFound))
                 }
             } else if let error = response.error {
                 completion(.failure(error))

@@ -25,4 +25,8 @@ extension String {
         let stringDateFormat = dateFormatter.string(from: date)
         return stringDateFormat
     }
+    
+    func localized () -> String {
+        return NSLocalizedString(self, comment: "")
+    }
 }
