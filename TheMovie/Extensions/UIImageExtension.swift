@@ -9,19 +9,6 @@ import Foundation
 import UIKit
 
 extension UIImage {
-    // return a newBlackAndWhite Image
-    func grayscale() -> UIImage {
-        // Core image filter doc: https://developer.apple.com/library/archive/documentation/GraphicsImaging/Reference/CoreImageFilterReference/index.html#//apple_ref/doc/uid/TP40004346
-        let context = CIContext(options: nil)
-        
-        guard let filter = CIFilter(name: "CIPhotoEffectTonal") else { return self}
-        filter.setValue(CIImage(image: self), forKey: kCIInputImageKey)
-        
-        guard let output = filter.outputImage,
-              let cgImage = context.createCGImage(output, from: output.extent)
-        else { return self }
-        return  UIImage(cgImage: cgImage)
-    }
     
     var averageColor: UIColor? {
         guard let inputImage = CIImage(image: self) else { return nil }

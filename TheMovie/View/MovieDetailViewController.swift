@@ -104,7 +104,7 @@ class MovieDetailViewController: UIViewController {
     func setImageIn(iView: UIImageView, url: String, grayImage: Bool, completion: @escaping ((UIImage)-> Void)) {
         viewModel?.getImageBy(url: url, completion: { data in
             guard let imageData = UIImage(data: data) else { return }
-            let image = (grayImage) ? imageData.grayscale() : imageData
+            let image =  imageData
             DispatchQueue.main.async {
                 iView.image = image
                 completion(image)
@@ -151,7 +151,7 @@ extension MovieDetailViewController {
         contentViewBackground.contentMode =  .scaleAspectFill
         contentViewBackground.clipsToBounds = true
         
-        if let image = movie.image?.grayscale() {
+        if let image = movie.image {
             contentViewBackground.image = image
         } else {
             let url = ApiCallerHelper.getUrlForImage(imageName:  movie.movie?.backdropPath ?? "")

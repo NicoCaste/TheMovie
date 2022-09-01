@@ -233,7 +233,7 @@ class FilmListView: UIView, UITableViewDelegate, UITableViewDataSource {
                 movie?.movie?.id == id
             }) else { return }
             if index < allMovies.count {
-                allMovies[index]?.image = image.grayscale()
+                allMovies[index]?.image = image
                 if allMovies[index]?.movie?.id == allMovies.first??.movie?.id {
                     DispatchQueue.main.async {
                         self.delegate?.readyToShow()
@@ -328,7 +328,7 @@ extension FilmListView: MovieCardProtocol {
             self.delegate?.getImageBy(url: url) { dataImage in
                 guard let image = UIImage(data: dataImage) else { return }
                 self.saveMovieImage(image: image, id: id, section: section)
-                completion(image.grayscale())
+                completion(image)
             }
         }
     }
